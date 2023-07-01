@@ -8,9 +8,6 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  id: string;
-
   @IsNotEmpty({
     message: 'Username is required',
   })

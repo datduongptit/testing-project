@@ -29,6 +29,13 @@ export class AuthController {
     return await this.authService.login(req.user);
   }
 
+  @UsePipes(ValidationPipe)
+  @UseGuards(LocalAuthGuard)
+  @Post('/logout')
+  async logout(@Req() req: Request) {
+    return await this.authService.login(req.user);
+  }
+
   @Post('password/change')
   // @Status(AccountStatus.VERIFIED)
   // @UsePipes(ValidationPipe)

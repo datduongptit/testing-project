@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseFilePipeBuilder,
+  Param,
 } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -20,10 +21,14 @@ import { Projects } from './entity/projects.entity';
 import { CreateProjecttDto } from './dto/projects.dto';
 import { User } from 'src/users/entity/users.entity';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectsService: ProjectService) {}
+  constructor(
+    private readonly projectsService: ProjectService,
+    private readonly userService: UsersService,
+  ) {}
 
   @Get('/all')
   @ApiOperation({
@@ -73,6 +78,50 @@ export class ProjectController {
     console.log(body);
 
     return await this.projectsService.delete(id);
+  }
+
+  @Get('/user/:id')
+  @ApiOperation({
+    summary: 'get a project',
+  })
+  @ApiBearerAuth()
+  // @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  async getProjectById(@Param('id') id: string) {
+    const listProjects = await this.projectsService.getProjectByUserId(id);
+    const listUsersAssigned = await Promise.all(
+      listProjects.map(async (project) => {
+        const listUsers = await JSON.parse(project.usersAssigned);
+        const result = await this.userService.getUserByListIds(listUsers);
+        const usersAssigned = result.map((result) => ({
+          name: result.username,
+          id: result.id,
+          role: result.role,
+        }));
+        return { ...project, usersAssigned };
+      }),
+    );
+
+    // console.log(123, listUsersAssigned);
+
+    return listUsersAssigned;
+  }
+
+  @Get('/:id')
+  @ApiOperation({
+    summary: 'get a project',
+  })
+  @ApiBearerAuth()
+  // @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  async getProjectByProjectId(@Param('id') id: string) {
+    const listProjects = await this.projectsService.getProjectById(id);
+    const listUsers = JSON.parse(listProjects.usersAssigned);
+    const result = await this.userService.getUserByListIds(listUsers);
+    // console.log(123, listUsersAssigned);
+    listProjects.usersAssigned = JSON.stringify(result);
+
+    return listProjects;
   }
 
   @UseInterceptors(FileInterceptor('file'))

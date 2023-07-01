@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { S3 } from 'aws-sdk';
 import { uid } from 'src/utils/functions';
 import { extname } from 'path';
@@ -54,6 +54,37 @@ export class ProjectService {
     try {
       const deleted = await this.projectsRepository.delete({ projectId: id });
       return deleted;
+    } catch (err) {
+      throw new Error(`Error creating ${err} product ${err.message}`);
+    }
+  }
+
+  async getProjectById(id: string) {
+    try {
+      const result = await this.projectsRepository.findOne({
+        where: {
+          projectId: id,
+        },
+      });
+      return result;
+    } catch (err) {
+      throw new Error(`Error creating ${err} product ${err.message}`);
+    }
+  }
+
+  async getProjectByUserId(id: string) {
+    try {
+      const result = await this.projectsRepository.find({
+        where: [
+          {
+            userId: id,
+          },
+          {
+            usersAssigned: Like(`%${id}%`),
+          },
+        ],
+      });
+      return result;
     } catch (err) {
       throw new Error(`Error creating ${err} product ${err.message}`);
     }

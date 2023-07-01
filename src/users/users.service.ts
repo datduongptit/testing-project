@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entity/users.entity';
 import * as bcrypt from 'bcrypt';
@@ -67,6 +67,8 @@ export class UsersService {
       const user = await this.userRepository.findOne({
         where: { email },
       });
+      console.log(user);
+
       const isMatch = await bcrypt.compare(password, user.password);
       if (user && isMatch) {
         return user;
@@ -112,8 +114,33 @@ export class UsersService {
         },
         where: { id },
       });
+
       if (user) {
         return user;
+      } else {
+        throw new Error(`User not found`);
+      }
+    } catch (err) {
+      throw new Error(`Error finding ${err} user ${err.message}`);
+    }
+  }
+
+  async getUserByListIds(listId: any): Promise<User[] | undefined> {
+    try {
+      const users = await this.userRepository.find({
+        select: {
+          id: true,
+          username: true,
+          role: true,
+          email: true,
+        },
+        where: {
+          id: In(listId),
+        },
+      });
+
+      if (users) {
+        return users;
       } else {
         throw new Error(`User not found`);
       }

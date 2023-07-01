@@ -9,6 +9,7 @@ import {
   ValidationPipe,
   Param,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -20,6 +21,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { User } from './entity/users.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ResponseMessage } from 'src/auth/decorator/response_message.decorator';
 
 @Controller('user')
 export class UsersController {
@@ -40,9 +42,22 @@ export class UsersController {
     return this.usersService.findUserById(user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/delete')
+  deleteAccount(@CurrentUser() user: User) {
+    return this.usersService.findUserById(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/user-info/:id')
+  getUserProfile(@Param('id') id: string) {
+    return this.usersService.getUserById(id);
+  }
+
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/listUsers')
+  @ResponseMessage('Fetched Stats Succesfully')
   getAllProfile() {
     return this.usersService.getAllUserProfile();
   }

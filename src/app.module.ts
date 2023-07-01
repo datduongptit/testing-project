@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { ProjectsModule } from './projects/projects.module';
 import { FileModule } from './file/file.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformInterceptor } from './utils/response.interceptor';
 // import { APP_GUARD } from '@nestjs/core';
 // import { RolesGuard } from './auth/guards/roles.guard';
 
@@ -18,11 +20,11 @@ import { FileModule } from './file/file.module';
     ProjectsModule,
     FileModule,
   ],
-  // providers: [
-  //   {
-  //     provide: APP_GUARD,
-  //     useClass: RolesGuard,
-  //   },
-  // ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
 })
 export class AppModule {}
