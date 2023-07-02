@@ -57,7 +57,7 @@ export class ProjectController {
 
   @Post('/update')
   @ApiOperation({
-    summary: 'create a project',
+    summary: 'update a project',
   })
   @ApiBearerAuth()
   @Roles(Role.ADMIN)

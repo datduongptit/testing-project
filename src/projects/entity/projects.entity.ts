@@ -29,7 +29,7 @@ export class Projects {
   //   @JoinColumn({ referencedColumnName: 'userUpload', name: 'userUpload' })
   //   user: User;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'longtext', default: JSON.stringify([]) })
   usersAssigned: string;
 
   @Column({ nullable: true })
