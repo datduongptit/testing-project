@@ -19,6 +19,7 @@ import { RolesGuard } from './guards/roles.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // Login
   @ApiOperation({
     summary: 'Login as a user',
   })
@@ -36,12 +37,20 @@ export class AuthController {
     return await this.authService.login(req.user);
   }
 
-  @Post('password/change')
   // @Status(AccountStatus.VERIFIED)
   // @UsePipes(ValidationPipe)
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('password/change')
   changePassword(@Req() req: Request) {
     return this.authService.changePassword(req.user, req.body);
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('password/reset')
+  resetPassword(@Req() req: Request) {
+    const email = req.body.email;
+    return this.authService.resetPassword(email);
   }
 }

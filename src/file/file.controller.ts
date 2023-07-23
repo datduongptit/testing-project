@@ -5,6 +5,9 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseFilePipeBuilder,
+  Get,
+  Param,
+  Delete,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -16,7 +19,7 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @UseInterceptors(FileInterceptor('file'))
-  @Post('upload')
+  @Post('/upload')
   async uploadFile(
     @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
@@ -28,9 +31,17 @@ export class FileController {
   }
 
   @UseInterceptors(FileInterceptor('file'))
-  @Post('delete')
+  @Post('/delete')
   async deleteFile(@Body() file: any) {
     return this.fileService.delete(file.id);
+  }
+
+  @UseInterceptors(FileInterceptor('file'))
+  @Delete('/delete/:id')
+  async deleteFileById(@Param('id') id: string, @Body() body: any) {
+    const url = body.url;
+    await this.fileService.deleteFileOnAwsS3(url);
+    return await this.fileService.delete(id);
   }
 
   @UseInterceptors(FileInterceptor('file'))

@@ -54,12 +54,12 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
 
-  @Roles(Role.ADMIN)
+  // @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/listUsers')
   @ResponseMessage('Fetched Stats Succesfully')
-  getAllProfile() {
-    return this.usersService.getAllUserProfile();
+  getAllProfile(@Query() query: any) {
+    return this.usersService.search(query);
   }
 
   @UseGuards(JwtAuthGuard)

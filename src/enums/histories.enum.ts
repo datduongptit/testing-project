@@ -1,0 +1,15 @@
+export enum HISTORIES_ACTION {
+  CREATE = 'CREATE',
+  DELETE = 'DELETE',
+  UPDATE = 'UPDATE',
+  REGISTER = 'REGISTER',
+  LOGOUT = 'LOGOUT',
+  LOGIN = 'LOGIN',
+}
+
+export enum HISTORIES_TYPE {
+  FILE = 'FILE',
+  ACCOUNT = 'ACCOUNT',
+  PROJECT = 'PROJECT',
+  AUTH = 'AUTH',
+}

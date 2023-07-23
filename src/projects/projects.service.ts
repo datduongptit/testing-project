@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
@@ -65,6 +66,14 @@ export class ProjectService {
         where: {
           projectId: id,
         },
+        relations: {
+          files: true,
+        },
+        order: {
+          files: {
+            updatedAt: 'DESC',
+          },
+        },
       });
       return result;
     } catch (err) {
@@ -87,6 +96,53 @@ export class ProjectService {
       return result;
     } catch (err) {
       throw new Error(`Error creating ${err} product ${err.message}`);
+    }
+  }
+
+  async search(id: string, query: any) {
+    let {
+      relations,
+      page,
+      limit,
+      sortBy = 'createdAt',
+      sort,
+      search,
+      ...where
+    } = query;
+    page = parseInt(page) || 1;
+    if (page < 1) page = 1;
+    if (limit !== 'all') limit = parseInt(limit) || 10;
+    else limit = 0;
+    const skip = (page - 1) * limit || 0;
+    if (relations) relations = relations.split(',');
+
+    try {
+      const [result, total] = await this.projectsRepository
+        .createQueryBuilder('projects')
+        .where(
+          '(projects.userId = :userId OR projects.usersAssigned LIKE :usersAssigned)',
+          {
+            userId: id,
+            usersAssigned: `%${id}%`,
+          },
+        )
+        .andWhere(
+          '(projects.name LIKE :name OR projects.manager LIKE :manager OR projects.customer LIKE :customer)',
+          {
+            name: `%${search || ''}%`,
+            manager: `%${search || ''}%`,
+            customer: `%${search || ''}%`,
+          },
+        )
+        .orderBy('projects.createdAt', sort === 'ASC' ? 'ASC' : 'DESC')
+        .skip(skip)
+        .take(limit)
+        .getManyAndCount();
+
+      return { result, total };
+    } catch (err) {
+      console.log(err);
+      throw new BadRequestException(err.message);
     }
   }
 

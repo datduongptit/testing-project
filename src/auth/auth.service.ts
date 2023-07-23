@@ -2,12 +2,15 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { MailService } from 'src/mailer/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -42,10 +45,6 @@ export class AuthService {
       if (!user) {
         return;
       }
-
-      // if (user.provider !== Providers.Local) {
-      //   throw new SocialProvider();
-      // }
       const passwordMatch = await bcrypt.compare(newPassWord, password);
 
       if (!passwordMatch) {
@@ -56,6 +55,19 @@ export class AuthService {
     } catch (err) {
       throw err;
     }
+  }
+
+  public async generateRandomPassword(length: number) {
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let password = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = crypto.randomInt(0, charset.length);
+      password += charset[randomIndex];
+    }
+
+    return password;
   }
 
   public async changePassword(user: any, body: any) {
@@ -77,5 +89,20 @@ export class AuthService {
         message: 'Password changed',
       };
     }
+  }
+
+  public async resetPassword(email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) throw new Error('User does not exist');
+    const idUpdate = user?.id;
+    const newGeneratePassword = await this.generateRandomPassword(10);
+    const hasNewPassword = await bcrypt.hash(newGeneratePassword, 10);
+    await this.mailService.sendPasswordResetConfirmation(
+      email,
+      newGeneratePassword,
+    );
+    return await this.usersService.update(idUpdate, {
+      password: hasNewPassword,
+    });
   }
 }

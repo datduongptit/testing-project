@@ -10,6 +10,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './auth.controller';
 import { RolesGuard } from './guards/roles.guard';
 import { User } from '../users/entity/users.entity';
+import { MailModule } from 'src/mailer/mail.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { User } from '../users/entity/users.entity';
       signOptions: { expiresIn: '23d' },
     }),
     forwardRef(() => UsersModule),
+    MailModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, RolesGuard],
   controllers: [AuthController],

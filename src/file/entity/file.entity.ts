@@ -1,3 +1,4 @@
+import { FILE_TYPE } from 'src/enums/file.enum';
 import { Projects } from 'src/projects/entity/projects.entity';
 import { User } from 'src/users/entity/users.entity';
 import {
@@ -26,10 +27,19 @@ export class File {
     orphanedRowAction: 'delete',
   })
   @JoinColumn({ referencedColumnName: 'projectId', name: 'projectId' })
-  projects: Projects;
+  projectsId: Projects;
+
+  @Column({ nullable: true })
+  fileName: string;
+
+  @Column({ type: 'enum', enum: FILE_TYPE, default: FILE_TYPE.REPORT })
+  fileType: FILE_TYPE;
 
   @Column({ nullable: true })
   userUpload: string;
+
+  @Column({ nullable: true })
+  baseUrl: string;
 
   @Column({ nullable: true })
   url: string;

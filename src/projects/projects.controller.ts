@@ -9,6 +9,7 @@ import {
   UploadedFile,
   ParseFilePipeBuilder,
   Param,
+  Query,
 } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -22,12 +23,14 @@ import { CreateProjecttDto } from './dto/projects.dto';
 import { User } from 'src/users/entity/users.entity';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { UsersService } from 'src/users/users.service';
+import { FileService } from 'src/file/file.service';
 
 @Controller('project')
 export class ProjectController {
   constructor(
     private readonly projectsService: ProjectService,
     private readonly userService: UsersService,
+    private readonly fileService: FileService,
   ) {}
 
   @Get('/all')
@@ -75,8 +78,6 @@ export class ProjectController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(@Body() body: any) {
     const id = body.projectId;
-    console.log(body);
-
     return await this.projectsService.delete(id);
   }
 
@@ -87,10 +88,10 @@ export class ProjectController {
   @ApiBearerAuth()
   // @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard)
-  async getProjectById(@Param('id') id: string) {
-    const listProjects = await this.projectsService.getProjectByUserId(id);
+  async getProjectById(@Query() query: any, @Param('id') id: string) {
+    const { result, total } = await this.projectsService.search(id, query);
     const listUsersAssigned = await Promise.all(
-      listProjects.map(async (project) => {
+      result.map(async (project) => {
         const listUsers = await JSON.parse(project.usersAssigned);
         const result = await this.userService.getUserByListIds(listUsers);
         const usersAssigned = result.map((result) => ({
@@ -102,9 +103,7 @@ export class ProjectController {
       }),
     );
 
-    // console.log(123, listUsersAssigned);
-
-    return listUsersAssigned;
+    return { listUsersAssigned, total };
   }
 
   @Get('/:id')
@@ -118,7 +117,6 @@ export class ProjectController {
     const listProjects = await this.projectsService.getProjectById(id);
     const listUsers = JSON.parse(listProjects.usersAssigned);
     const result = await this.userService.getUserByListIds(listUsers);
-    // console.log(123, listUsersAssigned);
     listProjects.usersAssigned = JSON.stringify(result);
 
     return listProjects;

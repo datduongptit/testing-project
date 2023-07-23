@@ -1,3 +1,4 @@
+import { File } from 'src/file/entity/file.entity';
 import { User } from 'src/users/entity/users.entity';
 import {
   Column,
@@ -8,6 +9,8 @@ import {
   OneToOne,
   Index,
   JoinColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -22,10 +25,12 @@ export class Projects {
   @Column({ nullable: true })
   userId: string;
 
-  //   @OneToOne(() => User, (user) => user.id, {
-  //     onDelete: 'CASCADE',
-  //     orphanedRowAction: 'delete',
-  //   })
+  @OneToMany(() => File, (file) => file.projectsId)
+  files: File[];
+
+  // @ManyToOne(() => User, (user) => user.id)
+  // userUpload: User[];
+
   //   @JoinColumn({ referencedColumnName: 'userUpload', name: 'userUpload' })
   //   user: User;
 

@@ -2,3 +2,4 @@
 /src/config/
 /‘~/
 /dist/
+.env

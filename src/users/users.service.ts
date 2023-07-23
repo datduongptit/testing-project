@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable prefer-const */
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entity/users.entity';
 import * as bcrypt from 'bcrypt';
@@ -27,7 +28,7 @@ export class UsersService {
     }
   }
 
-  async getAllUserProfile(): Promise<User[] | undefined> {
+  async getAllUserProfile(query: any): Promise<User[] | undefined> {
     try {
       const user = await this.userRepository.find({
         select: {
@@ -38,6 +39,9 @@ export class UsersService {
           password: false,
           createdAt: true,
         },
+        where: {
+          username: Like(`%`),
+        },
       });
       if (user) {
         return user;
@@ -46,6 +50,45 @@ export class UsersService {
       }
     } catch (err) {
       throw new Error(`Error finding ${err} user ${err.message}`);
+    }
+  }
+
+  async search(query: any) {
+    let {
+      relations,
+      page,
+      limit,
+      sortBy = 'createdAt',
+      sort,
+      search,
+      ...where
+    } = query;
+    console.log(search);
+
+    page = parseInt(page) || 1;
+    if (page < 1) page = 1;
+    if (limit !== 'all') limit = parseInt(limit) || 10;
+    else limit = 0;
+    const skip = (page - 1) * limit || 0;
+    if (relations) relations = relations.split(',');
+    try {
+      const [result, total] = await this.userRepository.findAndCount({
+        where: [
+          {
+            username: Like(`%${search || ''}%`),
+          },
+          {
+            email: Like(`%${search || ''}%`),
+          },
+        ],
+        order: { [sortBy]: sort === 'ASC' ? 'ASC' : 'DESC' },
+        skip,
+        take: limit,
+      });
+      return result;
+    } catch (err) {
+      console.log(err);
+      throw new BadRequestException(err.message);
     }
   }
 
@@ -67,10 +110,25 @@ export class UsersService {
       const user = await this.userRepository.findOne({
         where: { email },
       });
-      console.log(user);
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (user && isMatch) {
+        return user;
+      } else {
+        throw new Error(`User not found`);
+      }
+    } catch (err) {
+      throw new Error(`Error finding ${err} user ${err.message}`);
+    }
+  }
+
+  async findOneByEmail(email: string): Promise<User | undefined> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      if (user) {
         return user;
       } else {
         throw new Error(`User not found`);

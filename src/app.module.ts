@@ -8,6 +8,8 @@ import { ProjectsModule } from './projects/projects.module';
 import { FileModule } from './file/file.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './utils/response.interceptor';
+import { MailModule } from './mailer/mail.module';
+import { HistoriesModule } from './histories/histories.module';
 // import { APP_GUARD } from '@nestjs/core';
 // import { RolesGuard } from './auth/guards/roles.guard';
 
@@ -19,6 +21,8 @@ import { TransformInterceptor } from './utils/response.interceptor';
     ProductsModule,
     ProjectsModule,
     FileModule,
+    MailModule,
+    HistoriesModule,
   ],
   providers: [
     {

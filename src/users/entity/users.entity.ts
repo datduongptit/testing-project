@@ -6,13 +6,26 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { File } from 'src/file/entity/file.entity';
+import { Projects } from 'src/projects/entity/projects.entity';
+import { Histories } from 'src/histories/entity/histories.entity';
 
 export const UUIDParam = (name: string) => Param(name, new ParseUUIDPipe());
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToMany(() => File, (file) => file.userUpload)
+  userUpload: File[];
+
+  @OneToMany(() => Projects, (project) => project.userId)
+  userProject: Projects[];
+
+  @OneToMany(() => Histories, (history) => history.userId)
+  histories: Histories[];
 
   @Column({ nullable: false })
   username: string;
