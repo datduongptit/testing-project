@@ -28,6 +28,7 @@ export class ProjectService {
       project.userId = id;
       project.name = createProjectDto.name;
       project.usersAssigned = createProjectDto.usersAssigned;
+      project.userReport = createProjectDto.userReport;
       project.manager = createProjectDto.manager;
       project.customer = createProjectDto.customer;
       return await this.projectsRepository.save(project);

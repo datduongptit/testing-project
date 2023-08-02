@@ -56,9 +56,13 @@ export class FileService {
 
   async uploadFile(file, id) {
     if (!file) throw new BadRequestException('File invalid');
+    // const s3 = new S3({
+    //   accessKeyId: process.env.AMAZON_ACCESS_ID,
+    //   secretAccessKey: process.env.AMAZON_SECRET_KEY,
+    // });
     const s3 = new S3({
-      accessKeyId: process.env.AMAZON_ACCESS_ID,
-      secretAccessKey: process.env.AMAZON_SECRET_KEY,
+      accessKeyId: 'AKIAQBFYOGILHSWNN67O',
+      secretAccessKey: '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',
     });
     const fileName = `${Date.now()}-${uid()}${extname(
       file.originalname,
@@ -66,7 +70,7 @@ export class FileService {
     const originalName = file.originalname;
     const uploadResult = await s3
       .upload({
-        Bucket: process.env.AMAZON_BUCKET_NAME,
+        Bucket: 'zeroes98',
         Body: file.buffer,
         Key: `${id}/${fileName}`,
         ContentType: file.mimetype,

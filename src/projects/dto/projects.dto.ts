@@ -14,6 +14,11 @@ export class CreateProjecttDto {
   customer: string;
 
   @IsNotEmpty({
+    message: 'User report is required',
+  })
+  userReport: string;
+
+  @IsNotEmpty({
     message: 'Name is required',
   })
   name: string;

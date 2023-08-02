@@ -38,6 +38,9 @@ export class Projects {
   usersAssigned: string;
 
   @Column({ nullable: true })
+  userReport: string;
+
+  @Column({ nullable: true })
   manager: string;
 
   @Column({ nullable: true })
