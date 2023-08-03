@@ -5,7 +5,7 @@ import { S3 } from 'aws-sdk';
 import { uid } from 'src/utils/functions';
 import { extname } from 'path';
 import { File } from './entity/file.entity';
-import { CreateFileDto } from './dto/file.dto';
+import { CreateFileDto, UpdateFileDto } from './dto/file.dto';
 
 @Injectable()
 export class FileService {
@@ -30,6 +30,23 @@ export class FileService {
       return await this.fileRepository.save(file);
     } catch (err) {
       throw new Error(`Error creating ${err} product ${err.message}`);
+    }
+  }
+
+  async update(updateFileDto: UpdateFileDto, url: any): Promise<File> {
+    try {
+      const fileUpdate = await this.fileRepository.findOneBy({
+        id: updateFileDto.id,
+      });
+      fileUpdate.url = url.url;
+      fileUpdate.baseUrl = url.baseUrl;
+      fileUpdate.fileType = updateFileDto.fileType;
+      fileUpdate.fileName = updateFileDto.fileName || url.originalName;
+      fileUpdate.projectId = updateFileDto.projectId;
+      fileUpdate.userUpload = updateFileDto.userUpload;
+      return await this.fileRepository.save(fileUpdate);
+    } catch (err) {
+      throw new Error(`Error update ${err} file ${err.message}`);
     }
   }
 

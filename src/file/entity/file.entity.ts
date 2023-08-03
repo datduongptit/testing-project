@@ -44,6 +44,9 @@ export class File {
   @Column({ nullable: true })
   url: string;
 
+  @Column({ nullable: true, type: 'longtext', default: JSON.stringify([]) })
+  functions: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
