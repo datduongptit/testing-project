@@ -35,7 +35,7 @@ export class Histories {
   // })
   // @JoinColumn({ referencedColumnName: 'id', name: 'id' })
   // user: User;
-  @Column({ nullable: true, type: 'longtext', default: JSON.stringify([]) })
+  @Column({ type: 'longtext', default: JSON.stringify([]) })
   description: string;
 
   @CreateDateColumn({ name: 'updated_time' })

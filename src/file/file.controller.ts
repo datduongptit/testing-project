@@ -12,7 +12,11 @@ import {
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from './file.service';
-import { CreateFileDto, UpdateFileDto } from './dto/file.dto';
+import {
+  CreateFileDto,
+  UpdateFileDto,
+  UpdateFunctionDto,
+} from './dto/file.dto';
 
 @Controller('file')
 export class FileController {
@@ -40,6 +44,12 @@ export class FileController {
     const fileUpload = await this.fileService.uploadFile(file, 'abc123');
     const uploaded = await this.fileService.update(updateFileDto, fileUpload);
     return uploaded;
+  }
+
+  @Post('/update/function')
+  async updateFunctions(@Body() updateFunctionDto: UpdateFunctionDto) {
+    const update = await this.fileService.updateFunction(updateFunctionDto);
+    return update;
   }
 
   @UseInterceptors(FileInterceptor('file'))

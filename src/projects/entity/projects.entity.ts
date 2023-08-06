@@ -18,8 +18,8 @@ export class Projects {
   @PrimaryGeneratedColumn('uuid')
   projectId: string;
 
-  @Column({ nullable: true, unique: true })
   @Index({ unique: true })
+  @Column({ nullable: true })
   name: string;
 
   @Column({ nullable: true })
@@ -34,7 +34,7 @@ export class Projects {
   //   @JoinColumn({ referencedColumnName: 'userUpload', name: 'userUpload' })
   //   user: User;
 
-  @Column({ nullable: true, type: 'longtext', default: JSON.stringify([]) })
+  @Column({ type: 'longtext', default: JSON.stringify([]) })
   usersAssigned: string;
 
   @Column({ nullable: true })

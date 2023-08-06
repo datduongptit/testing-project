@@ -14,3 +14,8 @@ export class UpdateFileDto {
   fileName: string;
   fileType: FILE_TYPE;
 }
+
+export class UpdateFunctionDto {
+  id: string;
+  functions: string;
+}
