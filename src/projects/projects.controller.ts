@@ -66,6 +66,8 @@ export class ProjectController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Body() createProjectDto: CreateProjecttDto) {
+    console.log(1222);
+
     return await this.projectsService.update(createProjectDto);
   }
 

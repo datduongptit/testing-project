@@ -88,6 +88,16 @@ export class FileService {
     }
   }
 
+  async getFileById(id: string) {
+    try {
+      return await this.fileRepository.findOne({
+        where: { id },
+      });
+    } catch (err) {
+      throw new Error(`Error creating ${err} product ${err.message}`);
+    }
+  }
+
   async uploadFile(file, id) {
     if (!file) throw new BadRequestException('File invalid');
     // const s3 = new S3({

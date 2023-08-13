@@ -32,6 +32,7 @@ export class ProjectService {
       project.manager = createProjectDto.manager;
       project.customer = createProjectDto.customer;
       project.userReview = createProjectDto.userReview;
+      project.status = createProjectDto.status;
       project.startedAt = createProjectDto.startedAt;
       project.endAt = createProjectDto.endAt;
       return await this.projectsRepository.save(project);
@@ -51,11 +52,13 @@ export class ProjectService {
       projectUpdate.customer = createProjectDto.customer;
       projectUpdate.userReport = createProjectDto.userReport;
       projectUpdate.userReview = createProjectDto.userReview;
+      projectUpdate.status = createProjectDto.status;
       projectUpdate.startedAt = createProjectDto.startedAt;
       projectUpdate.endAt = createProjectDto.endAt;
+
       return await this.projectsRepository.save(projectUpdate);
     } catch (err) {
-      throw new Error(`Error creating ${err} product ${err.message}`);
+      throw new Error(`Error creating ${err} project ${err.message}`);
     }
   }
 

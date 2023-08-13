@@ -1,3 +1,4 @@
+import { PROJECT_STATUS } from 'src/enums/project.enum';
 import { File } from 'src/file/entity/file.entity';
 import { User } from 'src/users/entity/users.entity';
 import {
@@ -48,6 +49,9 @@ export class Projects {
 
   @Column({ nullable: true })
   customer: string;
+
+  @Column({ nullable: true })
+  status: PROJECT_STATUS;
 
   @Column({ nullable: true })
   startedAt: Date;

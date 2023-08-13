@@ -34,6 +34,12 @@ export class FileController {
     return uploaded;
   }
 
+  @Get('/:id')
+  async getFileById(@Param('id') id: string) {
+    const fileDetails = await this.fileService.getFileById(id);
+    return fileDetails;
+  }
+
   @UseInterceptors(FileInterceptor('file'))
   @Post('/update')
   async updateFile(

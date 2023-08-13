@@ -1,4 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
+import { PROJECT_STATUS } from 'src/enums/project.enum';
 
 export class CreateProjecttDto {
   projectId: string;
@@ -22,6 +23,11 @@ export class CreateProjecttDto {
     message: 'Name is required',
   })
   name: string;
+
+  @IsNotEmpty({
+    message: 'Status is required',
+  })
+  status: PROJECT_STATUS;
 
   usersAssigned: string;
   startedAt: Date;
