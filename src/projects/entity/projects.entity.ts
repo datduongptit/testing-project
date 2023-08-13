@@ -41,10 +41,19 @@ export class Projects {
   userReport: string;
 
   @Column({ nullable: true })
+  userReview: string;
+
+  @Column({ nullable: true })
   manager: string;
 
   @Column({ nullable: true })
   customer: string;
+
+  @Column({ nullable: true })
+  startedAt: Date;
+
+  @Column({ nullable: true })
+  endAt: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

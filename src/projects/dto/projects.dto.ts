@@ -24,4 +24,8 @@ export class CreateProjecttDto {
   name: string;
 
   usersAssigned: string;
+  startedAt: Date;
+  endAt: Date;
+
+  userReview: string;
 }
