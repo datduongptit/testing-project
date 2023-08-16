@@ -34,9 +34,9 @@ export class FileController {
     return uploaded;
   }
 
-  @Get('/:id')
-  async getFileById(@Param('id') id: string) {
-    const fileDetails = await this.fileService.getFileById(id);
+  @Get('/total-bugs')
+  async getTotalBug() {
+    const fileDetails = await this.fileService.getTotalBug();
     return fileDetails;
   }
 
@@ -110,5 +110,11 @@ export class FileController {
       body,
       file: file.buffer.toString(),
     };
+  }
+
+  @Get('/:id')
+  async getFileById(@Param('id') id: string) {
+    const fileDetails = await this.fileService.getFileById(id);
+    return fileDetails;
   }
 }

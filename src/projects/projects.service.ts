@@ -7,6 +7,7 @@ import { uid } from 'src/utils/functions';
 import { extname } from 'path';
 import { Projects } from './entity/projects.entity';
 import { CreateProjecttDto } from './dto/projects.dto';
+import { File } from 'src/file/entity/file.entity';
 
 @Injectable()
 export class ProjectService {
@@ -130,6 +131,7 @@ export class ProjectService {
     try {
       const [result, total] = await this.projectsRepository
         .createQueryBuilder('projects')
+        .leftJoinAndSelect('projects.files', 'files')
         .where(
           '(projects.userId = :userId OR projects.usersAssigned LIKE :usersAssigned)',
           {

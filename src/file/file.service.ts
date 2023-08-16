@@ -10,6 +10,7 @@ import {
   UpdateFileDto,
   UpdateFunctionDto,
 } from './dto/file.dto';
+import { FILE_TYPE } from 'src/enums/file.enum';
 
 @Injectable()
 export class FileService {
@@ -93,6 +94,34 @@ export class FileService {
       return await this.fileRepository.findOne({
         where: { id },
       });
+    } catch (err) {
+      throw new Error(`Error creating ${err} product ${err.message}`);
+    }
+  }
+
+  async getTotalBug() {
+    try {
+      const files = await this.fileRepository.find({
+        where: {
+          fileType: FILE_TYPE.TEST_CASE,
+        },
+        relations: {
+          projectsId: true,
+        },
+      });
+      let totalBugsSum = 0;
+      let totalTestcase = 0;
+
+      files.forEach((file) => {
+        if (file.functions) {
+          const functionsData = JSON.parse(file.functions);
+          functionsData.forEach((func) => {
+            totalBugsSum += parseInt(func.totalBug) || 0;
+            totalTestcase += parseInt(func.testcase) || 0;
+          });
+        }
+      });
+      return { totalBugs: totalBugsSum, totalTestcase, files };
     } catch (err) {
       throw new Error(`Error creating ${err} product ${err.message}`);
     }
