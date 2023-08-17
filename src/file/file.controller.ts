@@ -25,7 +25,6 @@ export class FileController {
   @UseInterceptors(FileInterceptor('file'))
   @Post('/upload')
   async uploadFile(
-    @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() createfileDto: CreateFileDto,
   ) {

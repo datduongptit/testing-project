@@ -42,8 +42,8 @@ export class HistoriesService {
           '(histories.userId = :userId AND histories.type LIKE :type AND histories.action LIKE :action)',
           {
             userId: id,
-            type: `%${type || ''}%`,
-            action: `%${action || ''}%`,
+            type: `%${type || search || ''}%`,
+            action: `%${action || search || ''}%`,
           },
         )
 

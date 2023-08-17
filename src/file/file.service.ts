@@ -127,7 +127,7 @@ export class FileService {
     }
   }
 
-  async uploadFile(file, id) {
+  async uploadFile(file, id: string) {
     if (!file) throw new BadRequestException('File invalid');
     // const s3 = new S3({
     //   accessKeyId: process.env.AMAZON_ACCESS_ID,
